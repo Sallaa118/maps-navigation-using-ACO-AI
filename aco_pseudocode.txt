@@ -1,0 +1,71 @@
+START
+
+/ --- Inisialisasi Waktu Eksekusi ---
+SET start_time = waktu_sekarang
+
+// --- Inisialisasi dan Konfigurasi ---
+Set log_console dan use_cache pada OSMnx
+Inisialisasi geolocator (Nominatim)
+
+// --- Definisikan Fungsi Waktu Tempuh Berdasarkan Kecepatan ---
+DEFINE FUNCTION calculate_travel_times(distance):
+    SET kecepatan_jalan_kaki = 1.4 m/s
+    SET kecepatan_motor = 8.33 m/s
+    SET kecepatan_mobil = 11.11 m/s
+    Hitung waktu tempuh berdasarkan jarak dan kecepatan
+    RETURN waktu_tempuh_per_moda
+
+// --- Definisikan Kelas ACO ---
+DEFINE CLASS AntColonyOptimized:
+    INITIALIZE(graph, ants, iterations)
+        SET pheromone awal untuk setiap edge = 1.0
+    DEFINE find_path(start, end):
+        FOR setiap iterasi:
+            FOR setiap semut:
+                Bangun path dari start ke end
+                Jika path valid dan lebih baik, simpan sebagai best_path
+                Update pheromone untuk best_path
+        RETURN best_path, total_jarak
+
+    DEFINE _construct_path(start, end):
+        Mulai dari start node
+        WHILE belum sampai end:
+            Pilih tetangga berdasarkan probabilitas pheromone
+            Tambahkan node ke path
+        RETURN path dan panjangnya
+
+    DEFINE _update_pheromones(path, length):
+        Tambahkan pheromone ke path terbaik
+
+// --- Fungsi Utama untuk Mencari Jalur ---
+DEFINE find_shortest_path_aco(start, end):
+    Ambil graph dari Universitas Bengkulu
+    Inisialisasi ACO
+    RETURN path dan jarak
+
+// --- Fungsi Utama Program ---
+DEFINE main():
+    Tampilkan header UNIB Pathfinder
+    LOAD peta Universitas Bengkulu via OSMnx
+    
+    INPUT lokasi awal dan tujuan
+    Geocoding lokasi menggunakan Nominatim
+    
+    Jika lokasi tidak ditemukan:
+        TAMPILKAN error dan EXIT
+    
+    Temukan node terdekat dari lokasi
+    Hitung rute dengan ACO
+    Hitung waktu tempuh dari jarak
+
+    Buat peta interaktif dengan Folium
+    Gambar garis rute dan marker lokasi awal & tujuan
+    Tambahkan kotak info interaktif (HTML + CSS)
+    Simpan sebagai HTML dan buka di browser
+
+// --- Hitung Waktu Eksekusi ---
+SET end_time = waktu_sekarang
+CALCULATE execution_time = end_time - start_time
+PRINT "Waktu eksekusi:", execution_time
+
+END
