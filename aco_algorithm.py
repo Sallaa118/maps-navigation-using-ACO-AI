@@ -7,19 +7,24 @@ from datetime import datetime
 import random
 from collections import defaultdict
 
+# Catat waktu mulai eksekusi
 start_time = time.time()
+
 # --- Konfigurasi OSMnx ---
 ox.settings.log_console = True
 ox.settings.use_cache = True
 ox.settings.timeout = 300
 
-# --- Fungsi untuk Menghitung Waktu Tempuh ---
+# --- Fungsi untuk Menghitung Waktu Tempuh Berdasarkan Jarak ---
 def calculate_travel_times(distance):
-    """Menghitung waktu tempuh untuk semua mode transportasi"""
+    """
+    Menghitung estimasi waktu tempuh berdasarkan jarak
+    untuk beberapa moda transportasi: jalan kaki, motor, dan mobil.
+    """
     speeds = {
-        'jalan_kaki': 1.4,  # ~5 km/jam
-        'motor': 8.33,      # ~30 km/jam
-        'mobil': 11.11      # ~40 km/jam
+        'jalan_kaki': 1.4,   # ~5 km/jam
+        'motor': 8.33,       # ~30 km/jam
+        'mobil': 11.11       # ~40 km/jam
     }
     
     times = {}
@@ -30,19 +35,26 @@ def calculate_travel_times(distance):
         
     return times
 
-# --- Algoritma ACO ---
+# --- Kelas Algoritma Semut (Ant Colony Optimization) untuk Pencarian Jalur ---
 class AntColonyOptimized:
+    """
+    Implementasi sederhana dari algoritma Ant Colony Optimization
+    untuk menemukan jalur terpendek antara dua titik pada graf.
+    """
     def __init__(self, graph, ants=30, iterations=100):
         self.graph = graph
         self.ants = ants
         self.iterations = iterations
-        # Inisialisasi feromon
         self.pheromones = defaultdict(lambda: defaultdict(float))
+        # Inisialisasi feromon awal untuk semua edge
         for u, v, data in graph.edges(data=True):
             self.pheromones[u][v] = 1.0
             self.pheromones[v][u] = 1.0
         
     def find_path(self, start, end):
+        """
+        Menjalankan iterasi semut untuk mencari jalur terpendek.
+        """
         best_path = None
         best_length = float('inf')
         
@@ -51,12 +63,14 @@ class AntColonyOptimized:
                 path, length = self._construct_path(start, end)
                 if path and length < best_length:
                     best_path, best_length = path, length
-                    # Update feromon untuk path terbaik
                     self._update_pheromones(best_path, best_length)
         
         return best_path, best_length
     
     def _construct_path(self, start, end):
+        """
+        Membangun jalur dari start ke end berdasarkan probabilitas.
+        """
         path = [start]
         current = start
         visited = set([start])
@@ -67,13 +81,12 @@ class AntColonyOptimized:
             if not neighbors:
                 return None, float('inf')
             
-            # Pilih next node berdasarkan feromon
             weights = [self.pheromones[current][n] for n in neighbors]
             total = sum(weights)
             if total == 0:
                 return None, float('inf')
                 
-            probabilities = [w/total for w in weights]
+            probabilities = [w / total for w in weights]
             next_node = random.choices(neighbors, weights=probabilities, k=1)[0]
             
             path.append(next_node)
@@ -84,24 +97,30 @@ class AntColonyOptimized:
         return path, total_length
     
     def _update_pheromones(self, path, length):
-        # Hanya update feromon untuk path terbaik
+        """
+        Memperbarui nilai feromon pada jalur terbaik yang ditemukan.
+        """
         delta = 1.0 / length if length > 0 else 0
-        for i in range(len(path)-1):
+        for i in range(len(path) - 1):
             u = path[i]
-            v = path[i+1]
+            v = path[i + 1]
             self.pheromones[u][v] += delta
             self.pheromones[v][u] += delta
 
 # --- Fungsi untuk Mendapatkan Waktu Sekarang ---
 def get_current_time():
+    """
+    Mengembalikan waktu sekarang dalam format yang ramah pengguna.
+    """
     now = datetime.now()
     return now.strftime("%H:%M %a, %d %b")
 
-# --- Fungsi Pembungkus untuk Menemukan Rute ---
+# --- Fungsi Pembungkus ACO untuk Temukan Jalur Terpendek ---
 def find_shortest_path_aco(start, end):
-    """Memanggil algoritma ACO untuk mencari rute"""
+    """
+    Membungkus pemanggilan ACO untuk mencari jalur dari node start ke end.
+    """
     try:
-        # Load graph dari Universitas Bengkulu
         G = ox.graph_from_place("Universitas Bengkulu, Indonesia", network_type="walk")
         aco = AntColonyOptimized(G)
         path, distance = aco.find_path(start, end)
@@ -110,9 +129,15 @@ def find_shortest_path_aco(start, end):
         print(f"Error ACO: {e}")
         return None, float('inf')
 
-# --- Fungsi Utama ---
+# --- Fungsi Utama Program ---
 def main():
-    # Load peta UNIB
+    """
+    Fungsi utama yang mengatur seluruh proses:
+    - Ambil input
+    - Lakukan geocoding
+    - Hitung rute terbaik
+    - Tampilkan peta interaktif
+    """
     print("Memuat peta Universitas Bengkulu...")
     try:
         G = ox.graph_from_place("Universitas Bengkulu, Indonesia", network_type="walk")
@@ -121,17 +146,16 @@ def main():
         print(f"Error: {e}")
         return
 
-    # Input lokasi
-    print("\n" + "="*40)
-    print("UNIB PATHFINDER".center(40))
-    print("="*40 + "\n")
+    print("\n" + "=" * 40)
+    print("UNIB NAVIGATOR".center(40))
+    print("=" * 40 + "\n")
     
     geolocator = Nominatim(user_agent="unib_navigator")
     
-    start_place = input("Masukkan lokasi awal (contoh: Rektorat): ").strip()
-    end_place = input("Masukkan lokasi tujuan (contoh: Fakultas Teknik): ").strip()
+    start_place = input("Tentukan lokasi awal (contoh: Gedung Rektorat): ").strip()
+    end_place = input("Tentukan lokasi tujuan (contoh: Fakultas Teknik): ").strip()
 
-    # Geocoding
+    # Fungsi bantu geocoding nama tempat ke koordinat
     def get_coords(place):
         try:
             location = geolocator.geocode(place + ", Bengkulu, Indonesia")
@@ -148,11 +172,11 @@ def main():
         print("Lokasi tidak ditemukan!")
         return
 
-    # Temukan node terdekat
+    # Temukan node terdekat pada graf dari titik koordinat
     start_node = ox.distance.nearest_nodes(G, start_coords[1], start_coords[0])
     end_node = ox.distance.nearest_nodes(G, end_coords[1], end_coords[0])
 
-    # Hitung rute
+    # Hitung rute menggunakan ACO
     print("\nMenghitung rute terbaik...")
     path, distance = find_shortest_path_aco(start_node, end_node)
     
@@ -160,15 +184,15 @@ def main():
         print("Tidak dapat menemukan rute!")
         return
 
-    # Hitung waktu tempuh
+    # Hitung estimasi waktu tempuh
     travel_times = calculate_travel_times(distance)
-   
-    # Buat peta
+
+    # Buat peta menggunakan folium
     print("Membuat peta interaktif...")
     center = ox.graph_to_gdfs(G, nodes=True, edges=False).unary_union.centroid
     m = folium.Map(location=[center.y, center.x], zoom_start=16)
 
-    # Gambar rute
+    # Gambar jalur terbaik pada peta
     if path:
         route_coords = [(G.nodes[n]['y'], G.nodes[n]['x']) for n in path]
         folium.PolyLine(
@@ -179,7 +203,7 @@ def main():
             tooltip=f"Jarak: {distance:.0f} meter"
         ).add_to(m)
 
-    # Tambahkan marker
+    # Tambahkan marker titik awal dan tujuan
     folium.Marker(
         location=[G.nodes[start_node]['y'], G.nodes[start_node]['x']],
         popup=f"<b>Start:</b> {start_place}",
@@ -192,7 +216,7 @@ def main():
         icon=folium.Icon(color='red', icon='flag')
     ).add_to(m)
 
-# Info box UNIB NAVIGATOR
+    # Info box tampilan bawah kiri
     current_time = get_current_time()
     info_html = f"""
     <div style="position: fixed; bottom: 20px; left: 20px; 
@@ -241,17 +265,17 @@ def main():
     """
     m.get_root().html.add_child(folium.Element(info_html))
 
-    # Simpan FIle HTML dan Buka Otomatis
+    # Simpan file dan buka otomatis
     filename = "unib_navigation_aco.html"
     m.save(filename)
     print(f"\nPeta disimpan sebagai '{filename}'")
     webbrowser.open(filename)
 
+# Jalankan program
 if __name__ == "__main__":
     main()
 
+# --- Hitung dan tampilkan waktu eksekusi ---
 end_time = time.time()
-
-# Hitung durasi eksekusi
 execution_time = end_time - start_time
 print(f"Waktu eksekusi: {execution_time:.2f} detik")
