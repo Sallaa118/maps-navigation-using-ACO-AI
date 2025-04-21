@@ -231,7 +231,7 @@ Kemudian terlihat dari gambar bahwa setiap percobaan menghasilkan rute yang berb
     - rute di percobaan sebelumnya ditemukan namun di percobaan selanjutnya tidak ditemukan
     - rute di percobaan sebelumnya tidak ditemukan namun di percobaan selanjutnya ditemukan
   - Estimasi waktu yang dibutuhkan program untuk dijalankan dari awal memuat peta hingga menampilkan peta
-    - rata rata yang dibutuhkan untuk menjalankan program yaitu sekitar 12 detik
+    - rata rata yang dibutuhkan untuk menjalankan program yaitu sekitar 8 detik
     - penginputan lokasi dari user juga berkontribusi dalam estimasi waktu dijalankannya program
 
 ---
