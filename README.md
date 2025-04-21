@@ -83,107 +83,87 @@ Berikut adalah daftar lokasi di Universitas Bengkulu yang dapat digunakan sebaga
 
 <table style="width:100%; border-collapse: collapse;">
   <tr>
-    <th style="width:50%; padding: 8px; text-align: left; border-bottom: 1px solid #ddd; background-color: #f2f2f2;">Nama Lokasi</th>
-    <th style="width:50%; padding: 8px; text-align: left; border-bottom: 1px solid #ddd; background-color: #f2f2f2;">Nama Lokasi</th>
+    <th style="width:25%; padding: 8px; text-align: left; border-bottom: 1px solid #ddd; background-color: #f2f2f2;">Nama Lokasi</th>
+    <th style="width:25%; padding: 8px; text-align: left; border-bottom: 1px solid #ddd; background-color: #f2f2f2;">Nama Lokasi</th>
+    <th style="width:25%; padding: 8px; text-align: left; border-bottom: 1px solid #ddd; background-color: #f2f2f2;">Nama Lokasi</th>
+    <th style="width:25%; padding: 8px; text-align: left; border-bottom: 1px solid #ddd; background-color: #f2f2f2;">Nama Lokasi</th>
   </tr>
   <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Gedung Rektorat</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Masjid Baitul Hikmah</td>
-  </tr>
-  <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Perpustakaan</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Gerbang Masuk Kanan UNIB Belakang</td>
   </tr>
   <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Gerbang Masuk Kiri UNIB Belakang</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Gerbang Masuk UNIB Depan</td>
-  </tr>
-  <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">GB 1</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">GB 2</td>
   </tr>
   <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">GB 3 & 4</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">GB 5</td>
-  </tr>
-  <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">LPTIK</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">GSG</td>
   </tr>
   <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Dekanat Teknik</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Lab Teknik</td>
-  </tr>
-  <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Lab Terpadu Teknik</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Stadion UNIB</td>
   </tr>
   <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Gedung FKIP</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Fakultas Kedokteran</td>
-  </tr>
-  <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Sekretariat UKM</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Dekanat FMIPA</td>
   </tr>
   <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Sekretariat BEM FMIPA</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Gedung Fisika</td>
-  </tr>
-  <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Ruang Baca Pertanian</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Lab Agronomi</td>
   </tr>
   <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">GLT</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Masjid Darul Ulum</td>
-  </tr>
-  <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Lab Ilmu Tanah</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Dekanat Pertanian</td>
   </tr>
   <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Dekanat Hukum</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Lab Hukum</td>
-  </tr>
-  <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Dekanat FEB</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Magister Ilmu Ekonomi</td>
   </tr>
   <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Jurusan Ekonomi Pembangunan</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">UPT BING</td>
-  </tr>
-  <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Gedung J</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Gedung K</td>
   </tr>
   <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Gedung C</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Danau UNIB</td>
-  </tr>
-  <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Mushola Shelter</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Dekanat FISIP</td>
   </tr>
   <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Dekanat FKIP</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Gerbang Keluar UNIB Depan</td>
-  </tr>
-  <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Gerbang Keluar UNIB Belakang</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Asrama PGSD</td>
   </tr>
   <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">S2 Matematika</td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Klinik Pratama UNIB</td>
-  </tr>
-  <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Sekretariat Teknik</td>
-    <td style="padding: 8px; border-bottom: 1px solid #eee;">Gerbang Rektorat</td>
+    <td style="padding: 8px; border-bottom: 1px solid #eee;">Gerbang Utama Rektorat</td>
   </tr>
   <tr>
     <td style="padding: 8px; border-bottom: 1px solid #eee;">Lapangan Olahraga UNIB</td>
+    <td style="padding: 8px; border-bottom: 1px solid #eee;"></td>
+    <td style="padding: 8px; border-bottom: 1px solid #eee;"></td>
     <td style="padding: 8px; border-bottom: 1px solid #eee;"></td>
   </tr>
 </table>
