@@ -1,71 +1,150 @@
 START
 
-/ --- Inisialisasi Waktu Eksekusi ---
-SET start_time = waktu_sekarang
+// --- Inisialisasi Waktu Eksekusi ---
+SET start_time = current_time()
 
-// --- Inisialisasi dan Konfigurasi ---
-Set log_console dan use_cache pada OSMnx
-Inisialisasi geolocator (Nominatim)
+// --- Konfigurasi Sistem ---
+// 1. Setup OSMnx
+SET ox.settings:
+    log_console = True
+    use_cache = True
+    timeout = 300
 
-// --- Definisikan Fungsi Waktu Tempuh Berdasarkan Kecepatan ---
-DEFINE FUNCTION calculate_travel_times(distance):
-    SET kecepatan_jalan_kaki = 1.4 m/s
-    SET kecepatan_motor = 8.33 m/s
-    SET kecepatan_mobil = 11.11 m/s
-    Hitung waktu tempuh berdasarkan jarak dan kecepatan
-    RETURN waktu_tempuh_per_moda
+// 2. Inisialisasi Komponen Utama
+INITIALIZE geolocator = Nominatim(user_agent="unib_nav")
+LOAD UNIB_BUILDINGS_DATABASE = {
+    'gedung rektorat': (-3.75904, 102.27231),
+    'masjid baitul hikmah': (-3.75894, 102.27600),
+    ... // data lainnya
+}
 
-// --- Definisikan Kelas ACO ---
+// --- Definisi Kelas & Fungsi Utama ---
+
+// 1. Gate Control System
+DEFINE CLASS GateController:
+    METHOD __init__():
+        SET weekday_hours = (07:00, 18:00)
+        SET always_open_hours = (00:00, 23:59)
+    
+    METHOD check_access(current_time):
+        IF weekday AND within_operational_hours:
+            RETURN gate_status = OPEN
+        ELSE:
+            RETURN gate_status = CLOSED
+        // Aturan khusus gerbang belakang...
+
+// 2. Algoritma ACO
 DEFINE CLASS AntColonyOptimized:
-    INITIALIZE(graph, ants, iterations)
-        SET pheromone awal untuk setiap edge = 1.0
-    DEFINE find_path(start, end):
-        FOR setiap iterasi:
-            FOR setiap semut:
-                Bangun path dari start ke end
-                Jika path valid dan lebih baik, simpan sebagai best_path
-                Update pheromone untuk best_path
-        RETURN best_path, total_jarak
+    METHOD __init__(graph):
+        SET self.pheromones = defaultdict
+        LOAD gate_rules FROM GateController
+        IDENTIFY gate_nodes IN graph
+        
+    METHOD find_path(start, end):
+        FOR i = 1 TO iterations:
+            FOR ant = 1 TO ant_count:
+                path = BUILD_PATH(start, end)
+                UPDATE_PHEROMONES(path)
+        RETURN best_path, shortest_distance
 
-    DEFINE _construct_path(start, end):
-        Mulai dari start node
-        WHILE belum sampai end:
-            Pilih tetangga berdasarkan probabilitas pheromone
-            Tambahkan node ke path
-        RETURN path dan panjangnya
+    PRIVATE METHOD BUILD_PATH(start, end):
+        // Implementasi konstruksi jalur semut
+        RETURN path, distance
 
-    DEFINE _update_pheromones(path, length):
-        Tambahkan pheromone ke path terbaik
+// 3. Fungsi Pendukung
+DEFINE FUNCTION get_building_coords(place_name):
+    SEARCH place_name IN UNIB_BUILDINGS_DATABASE
+    IF not found:
+        TRY geocoding WITH geolocator
+    RETURN coordinates OR None
 
-// --- Fungsi Utama untuk Mencari Jalur ---
-DEFINE find_shortest_path_aco(start, end):
-    Ambil graph dari Universitas Bengkulu
-    Inisialisasi ACO
-    RETURN path dan jarak
+DEFINE FUNCTION calculate_travel_time(distance):
+    SET speeds = {
+        'walking': 1.4,
+        'motorcycle': 8.33,
+        'car': 11.11
+    }
+    CALCULATE time_for_each_mode
+    RETURN formatted_times
 
-// --- Fungsi Utama Program ---
-DEFINE main():
-    Tampilkan header UNIB Pathfinder
-    LOAD peta Universitas Bengkulu via OSMnx
+// --- Alur Utama Program ---
+DEFINE FUNCTION main():
+    // 1. Load Peta
+    TRY:
+        GET graph = ox.graph_from_place("Universitas Bengkulu")
+    EXCEPT:
+        PRINT "Gagal memuat peta"
+        EXIT
+
+    // 2. Input Pengguna
+    DISPLAY "UNIB NAVIGATOR"
+    INPUT start_location, end_location
     
-    INPUT lokasi awal dan tujuan
-    Geocoding lokasi menggunakan Nominatim
+    // 3. Konversi ke Koordinat
+    SET start_coords = get_building_coords(start_location)
+    SET end_coords = get_building_coords(end_location)
     
-    Jika lokasi tidak ditemukan:
-        TAMPILKAN error dan EXIT
+    IF start_coords == None OR end_coords == None:
+        PRINT "Lokasi tidak valid"
+        EXIT
+
+    // 4. Temukan Node Terdekat
+    SET start_node = nearest_node(graph, start_coords)
+    SET end_node = nearest_node(graph, end_coords)
     
-    Temukan node terdekat dari lokasi
-    Hitung rute dengan ACO
-    Hitung waktu tempuh dari jarak
+    // 5. Hitung Rute dengan ACO
+    INITIALIZE aco = AntColonyOptimized(graph)
+    SET path, distance = aco.find_path(start_node, end_node)
+    
+    IF path == None:
+        PRINT "Tidak ada rute yang valid"
+        EXIT
 
-    Buat peta interaktif dengan Folium
-    Gambar garis rute dan marker lokasi awal & tujuan
-    Tambahkan kotak info interaktif (HTML + CSS)
-    Simpan sebagai HTML dan buka di browser
+    // 6. Visualisasi
+    CREATE folium_map CENTERED AT UNIB
+    DRAW path WITH blue_line
+    ADD markers:
+        - GREEN for start
+        - RED for end
+        - PURPLE for gates
+    ADD info_box WITH:
+        - Current time
+        - Distance
+        - Estimated travel times
+    
+    // 7. Output
+    SAVE map AS "unib_navigation_aco.html"
+    OPEN map IN browser
 
-// --- Hitung Waktu Eksekusi ---
-SET end_time = waktu_sekarang
-CALCULATE execution_time = end_time - start_time
-PRINT "Waktu eksekusi:", execution_time
+// --- Eksekusi ---
+CALL main()
+SET end_time = current_time()
+PRINT "Execution time:", end_time - start_time
 
 END
+
+ALUR KERJA UTAMA
+1. MULAI
+2. Muat peta UNIB dari OSMnx
+3. Inisialisasi:
+   - Database gedung (UNIB_BUILDINGS)
+   - Controller gerbang (GateController)
+   - Algoritma ACO (AntColonyOptimized)
+4. Minta input pengguna:
+   - Lokasi awal
+   - Lokasi tujuan
+5. Cari koordinat:
+   - Cek di database lokal → jika tidak ada, gunakan geocoding
+6. Konversi ke node OSMnx terdekat
+7. Jalankan ACO untuk temukan rute terpendek:
+   - Bangun jalur dengan semut
+   - Update feromon
+   - Ulangi hingga iterasi selesai
+8. Jika rute ditemukan:
+   - Visualisasi dengan Folium
+   - Tampilkan info jarak/waktu
+   - Highlight gerbang yang relevan
+9. Jika gagal:
+   - Beri pesan error (misal: gerbang tutup)
+10. SIMPAN dan BUKA peta
+11. SELESAI
